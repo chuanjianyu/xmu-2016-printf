@@ -1,0 +1,157 @@
+{% extends "roomManager/base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+我的同伴-酒店入住自助管理系统
+{% endblock %}
+
+{% block other_css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/QueryCenterStyle.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-select.min.css" %}">
+{% endblock %}
+
+{% block other_script %}
+<script type="text/javascript" src = "{% static "js/bootstrap-select.js" %}" ></script>
+{% endblock %}
+
+
+{% block other_breadcrumb_ol %}
+
+{% endblock %}
+
+<!-- 左侧控制台 -->
+{% block left_content %}
+<div class="col-sm-3 col-md-2 sidebar">
+	<br>
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 查询中心</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if queryByRoomType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomType" %}">按客房类型查询</a></li>
+					<li {% if queryByFloorId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByFloorId" %}">按楼层查询</a></li>
+					<li {% if queryByBedType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByBedType" %}">按床铺类型查询</a></li>
+					<li {% if queryByRoomId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomId" %}">按房间号查询</a></li>
+				</ul>
+			</div>
+	</div>
+
+{% if user.permission > '0' %}
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 房间管理</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if myRoom %}class="compare_active" {% endif %} >
+							<a href="{% url "roomManager:myRoom" %}">已定查看</a>
+					</li>
+					<li {% if checkOut %}class="compare_active" {% endif %}>
+						<a href="{% url "roomManager:checkOut" %}">退房管理</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="panel LeftContent_panel">
+				<div class="panel-heading">
+					<p><span class="glyphicon glyphicon-align-right"></span>个人信息管理</p>
+				</div>
+				<div class="panel-body QueryCenter_Pbody">
+					<ul style="padding-left: 15px;">
+						<li {% if MyInf %}class="compare_active" {% endif %} >
+								<a href="{% url "accounts:accounts_listMyInf" %}">个人信息查看</a>
+						</li>
+						{% if user.permission == '2' %}
+						<li {% if updateInf %}class="compare_active" {% endif %}>
+								<a href="{% url "accounts:accounts_updateInf" %}">个人基本信息修改</a>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+{% endif %}
+</div>
+{% endblock %}
+
+<!-- 右侧控制台 -->
+{% block right_content %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+		<div class="panel-group" id="accordion">
+			<div class="panel panel-default Collapse_content">
+        <!-- -->
+          <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                  <span class="glyphicon glyphicon-align-right"></span> 房间管理/我的房间同伴
+                </a>
+              </h4>
+          </div>
+
+					<div class="panel-collapse collapse in RightContent_panel" id="collapseOne">
+						<div class="panel-body">
+                <ul class="nav nav-tabs" role="tablist" id="tab-list" style="padding-left: 52px;">
+	                <li class="active"><a href="#Query_myRoom" role="tab" data-toggle="tab">我的同伴</a></li>
+                </ul>
+
+								<div class="tab-content" style="margin-bottom:20px;">
+                				<!-- 指标查询 -->
+											<div class="tab-pane active" id="Query_myRoom">
+												 	<form class="" role="form"  method="post">
+														{% csrf_token %}
+													<div class="row Query_table">
+															<div class="col-md-12 border_style">
+																<table id="Queryindicator_table_id" class="Quato_table_class table table-bordered table-hover">
+																	<thead>
+																		<tr>
+																			 <th>身份证号</th>
+																			 <th>用户姓名</th>
+																			 <th>房间号</th>
+																			 <th>入住时间</th>
+																			 <th>退房时间</th>
+
+																		</tr>
+																	</thead>
+
+																	<tbody>
+																		{% for item in mycompany_list %}
+																			<tr>
+
+																				<td>
+																					 <p>{{item.cardnumber}}</p>
+																				</td>
+
+																				<td>
+																					 <p>{{item.username}}</p>
+																				</td>
+
+																				<td>
+																					 <p>{{item.roomid}}</p>
+																				</td>
+
+																				<td>
+																					 <p>{{item.startdate}}</p>
+																				</td>
+
+																				<td>
+																					<p>{{item.enddate}}</p>
+																				</td>
+
+																			</tr>
+																		{%endfor%}
+																	</tbody>
+																</table>
+															</div>
+													</div>
+													</form>
+											</div>
+
+								</div>
+						</div>
+					</div>
+			</div>
+		</div>
+</div>
+
+{% endblock %}

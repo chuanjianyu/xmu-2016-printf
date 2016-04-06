@@ -1,0 +1,84 @@
+.QueryCenter_Pbody{
+
+}
+
+.QueryCenter_Pbody > ul > li{
+	padding-top: 5px;
+}
+
+.QueryCenter_Pbody > ul > li{
+	font-size: 18px;
+}
+
+.Query_select .navbar-form .form-group .selectpicker option{
+	color: #000;
+}
+
+option{
+	color: #000;
+}
+
+.Query_title{
+	font-size: 15px;
+	padding-top: 14px;
+	margin: 0px;
+}
+
+.Query_title label{
+	margin: 0;
+	padding: 0;
+}
+
+.year_select{
+	text-align: center;
+	color: #000;
+}
+.Query_year_title{
+	font-size: 15px;
+	padding-top: 14px;
+	margin: 0px;
+	margin-right: 15px;
+}
+
+.Query_year{
+	margin-top: 8px;
+}
+
+.Query_table{
+	margin-top: 20px;
+}
+.Query_table table > thead > tr{
+	background-color: #dff0d8;
+}
+.Query_table table > thead > tr > th,
+.Query_table table > tbody > tr > td{
+	text-align: center;
+	font-weight: bold;
+	color: #000;
+}
+
+
+
+/* 下拉框 */
+.QC_SelectStyle{
+	margin-top: 15px;
+}
+
+.QC_SelectStyle option{
+	text-align: center;
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.compare_active{
+	font-size: 16px;
+	color: red;
+}
+
+/**/
+.border_style{
+	padding: 3px;
+	padding-top: 10px;
+	border: 1px solid #fff;
+	background-color: #dff0d0;
+}

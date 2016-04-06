@@ -1,0 +1,321 @@
+{% extends "roomManager/base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+入住信息确认-酒店自助入住终端
+{% endblock %}
+
+{% block other_css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/QueryCenterStyle.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-select.min.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/jquery.dataTables.css" %}">
+{% endblock %}
+
+{% block other_script %}
+<script type="text/javascript" src = "{% static "js/bootstrap-select.js" %}" ></script>
+<script type="text/javascript" src = "{% static "js/jquery.dataTables.js" %}" ></script>
+<script type="text/javascript" src = "{% static "js/TableFunction.js" %}" ></script>
+{% endblock %}
+
+
+<!-- 左侧控制台 -->
+{% block left_content %}
+<div class="col-sm-3 col-md-2 sidebar">
+	<br>
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 查询中心</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if queryByRoomType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomType" %}">按客房类型查询</a></li>
+					<li {% if queryByFloorId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByFloorId" %}">按楼层查询</a></li>
+					<li {% if queryByBedType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByBedType" %}">按床铺类型查询</a></li>
+					<li {% if queryByRoomId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomId" %}">按房间号查询</a></li>
+				</ul>
+			</div>
+	</div>
+
+{% if user.permission > '0' %}
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 房间管理</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if myRoom %}class="compare_active" {% endif %} >
+							<a href="{% url "roomManager:myRoom" %}">已定查看</a>
+					</li>
+					<li {% if checkOut %}class="compare_active" {% endif %}>
+						<a href="{% url "roomManager:checkOut" %}">退房管理</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="panel LeftContent_panel">
+				<div class="panel-heading">
+					<p><span class="glyphicon glyphicon-align-right"></span>个人信息管理</p>
+				</div>
+				<div class="panel-body QueryCenter_Pbody">
+					<ul style="padding-left: 15px;">
+						<li {% if MyInf %}class="compare_active" {% endif %} >
+								<a href="{% url "accounts:accounts_listMyInf" %}">个人信息查看</a>
+						</li>
+						{% if user.permission == '2' %}
+						<li {% if updateInf %}class="compare_active" {% endif %}>
+								<a href="{% url "accounts:accounts_updateInf" %}">个人基本信息修改</a>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+{% endif %}
+</div>
+{% endblock %}
+
+<!-- 右侧控制台 -->
+{% block right_content %}
+
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+		<div class="panel-group" id="accordion">
+			<div class="panel panel-default Collapse_content">
+        <!-- -->
+          <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                  <span class="glyphicon glyphicon-align-right"></span> 您定的房间信息：
+                </a>
+              </h4>
+          </div>
+
+					<div class="panel-collapse collapse in RightContent_panel" id="collapseOne">
+						<div class="panel-body">
+                <ul class="nav nav-tabs" role="tablist" id="tab-list" style="padding-left: 52px;">
+	                <li class="active"><a href="#Query_Quota" role="tab" data-toggle="tab">全日租</a></li>
+	                <li ><a href="#Query_Veriable" role="tab" data-toggle="tab">钟点房</a></li>
+                </ul>
+
+								<div class="tab-content">
+                	<!-- 指标查询 -->
+											<div class="tab-pane active" id="Query_Quota">
+	                    		<div class="row">
+	                    				<div class="col-md-1"></div>
+															<div class="col-md-5 Query_select">
+																	<!-- 指标查询 多选 -->
+																	<div class="form-group">
+							    								<div class="navbar-header Query_title">
+							        						<span class="glyphicon glyphicon-eye-open"></span>
+							        						<label>全日租方式   住房天数：</label>
+							    								</div>
+									  								<input disabled="" class="col-md-2 QC_SelectStyle" type="text"  id="day_id" name="daynum" value = {{daynum}}>
+																	</div>
+															</div>
+															<div class="col-md-5 Query_select">
+																	<!-- 指标查询 多选 -->
+																	<div class="form-group">
+							    								<div class="navbar-header Query_title">
+							        						<span class="glyphicon glyphicon-eye-open"></span>
+							        						<label>请选择付款类型：</label>
+							    								</div>
+																	<select class="QC_SelectStyle"  id="paytype_id" name="paytype">
+																		{% if user.permission == '2'%}
+																		<option value="账户余额">账户余额</option>
+																		{% endif %}
+																		<option value="支付宝">支付宝</option>
+																		<option value="银行卡">银行卡</option>
+																	</select>
+																	</div>
+															</div>
+	                    		</div>
+													<div class="row">
+	                    				<div class="col-md-1"></div>
+															<div class="col-md-5 Query_select">
+																	<div class="form-group">
+							    								<div class="navbar-header Query_title">
+							        						<span class="glyphicon glyphicon-eye-open"></span>
+							        						<label>您需要的付款总额度为：</label>
+							    								</div>
+									  								<input value="{{cost}}"  disabled=" " type="text" class="col-md-2 QC_SelectStyle" id="total_cost_id" required name="total_cost" placeholder="总付款额度" >
+																	</div>
+															</div>
+	                    		</div>
+
+													<div class="row Query_table">
+															<div class="col-md-12">
+																<table id="Day_table_id" class="table table-bordered table-hover">
+																	<thead>
+																		<tr>
+																			  <th>楼层号</th>
+                                        <th>房间号</th>
+                                        <th>房间类型</th>
+                                        <th>入住时间</th>
+																				<th>退房时间</th>
+                                        <th>共计总价(元)</th>
+
+																		</tr>
+																	</thead>
+
+																	<tbody>
+																			<tr>
+																				<td>
+																					 <p>{{room.floorid}}</p>
+																				</td>
+
+																				<td>
+																					 <p>{{room.roomid}}</p>
+																				</td>
+
+                                        <td>
+																					<p>{{room.roomtype}}</p>
+																				</td>
+
+																				<td>
+																					<p>{{starttime}}</p>
+																				</td>
+																				<td>
+																					<p>{{endtime}}</p>
+																				</td>
+
+																				<td>
+	                                        <p>{{cost}}</p>
+																				</td>
+
+																			</tr>
+																	</tbody>
+																</table>
+															</div>
+													</div>
+
+													<div class="container ">
+		                      	<div class="row ">
+		                          <div class="col-md-2 col-md-offset-5">
+		                						<a class="btn " onclick="CheckPayType()" >确定</a>
+		                					</div>
+		                        </div>
+		                    </div>
+											</div>
+											<!-- 变量查询 -->
+											<div class="tab-pane" id="Query_Veriable">
+												<div class="row">
+														<div class="col-md-1"></div>
+														<div class="col-md-5 Query_select">
+																<!-- 指标查询 多选 -->
+																<div class="form-group">
+																<div class="navbar-header Query_title">
+																<span class="glyphicon glyphicon-eye-open"></span>
+																<label>钟点房方式  入住小时：</label>
+																</div>
+																	<select class="QC_SelectStyle" onchange="onSelect_Clock()" id="clock_id" name="clockname">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+																		<option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+																		<option value="7">7</option>
+									      						<option value="8">8</option>
+									      						<option value="9">9</option>
+																	</select>
+																</div>
+																<label for="id_sex" class="#">您需要的付款总额度为：  </label>
+																<input type="text" value="{{roomsession.clockprice}}" class="#" id="total_pricecost_id" required name="total_pricecost" placeholder="总付款额度" >
+														</div>
+												</div>
+
+												<div class="row Query_table">
+														<div class="col-md-12">
+															<table id="Clock_table_id" class="table table-bordered table-hover">
+																<thead>
+																	<tr>
+																		 <th>楼层号</th>
+																		 <th>房间号</th>
+																		 <th>房间类型</th>
+																		 <th>钟点房价({{room.clockprice_unit}})</th>
+																		 <th>共计总价(元)</th>
+																	</tr>
+																</thead>
+
+                                <tbody>
+                                    <tr>
+																			<td>
+																				 <p>{{room.floorid}}</p>
+																			</td>
+
+                                      <td>
+                                         <p>{{room.roomid}}</p>
+                                      </td>
+
+                                      <td>
+                                        <p>{{room.roomtype}}</p>
+                                      </td>
+
+                                      <td>
+                                        <p>{{room.clockprice}}</p>
+                                      </td>
+
+                                      <td>
+                                        <p>{{room.clockprice}}</p>
+                                      </td>
+                                    </tr>
+                                </tbody>
+															</table>
+														</div>
+												</div>
+												<div class="container ">
+	                      	<div class="row ">
+	                          <div class="col-md-2 col-md-offset-5">
+	                						<button class="btn btn btn-primary btn-block" type="submit">确定</button>
+	                					</div>
+	                        </div>
+	                    </div>
+											</div>
+								</div>
+						</div>
+					</div>
+			</div>
+		</div>
+</div>
+<script type="text/javascript">
+
+function CheckPayType()//根据付款类型进行付款
+{
+
+		var paytype = document.getElementById("paytype_id");
+		var paycost = document.getElementById("total_cost_id");
+
+		var billname = '日住房付款'
+		var billdescripte = '{{room.roomtype}}'+"共计总价"+'{{cost}}'
+		if(paytype.value == "银行卡")
+		{
+			 	var acc_type = '银行卡'
+				window.location.href = "#";
+		}
+ 		else if(paytype.value == "账户余额")
+		{
+			var acc_type = '账户余额'
+			window.location.href = "{% url "roomManager:payBalance" %}";
+
+		}
+		else if(paytype.value == "支付宝")
+		{
+				var acc_type = '支付宝'
+				//window.location.href = "{% url 'roomManager:checkIn' %}" + '?index=' + 1 + '&starttime=' + '{{starttime}}' + '&endtime=' + '{{endtime}}' ;
+				window.location.href = "{%url "payment:payment_upgrade_account" %}" + '?acc_type=' +acc_type + '&billname=' + billname + '&billdescripte=' + billdescripte+ '&paycost=' + paycost ;
+		}
+}
+
+
+function onSelect_Clock()//根据变量编号刷选
+{
+	var clock_id = document.getElementById("clock_id");
+	var table = document.getElementById("Clock_table_id");
+	var unit = "{{room.clockprice_unit}}"
+	var total_pricecost = document.getElementById("total_pricecost_id")
+	total_pricecost.value = "{{room.clockprice}}"*(Math.ceil(clock_id.options[clock_id.selectedIndex].value/unit[2]))
+	//alert(Math.ceil(clock_id.options[clock_id.selectedIndex].value/unit[2]))
+	table.rows[1].cells[4].innerHTML = total_pricecost.value
+}
+
+</script>
+{% endblock %}

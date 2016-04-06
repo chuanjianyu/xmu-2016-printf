@@ -1,0 +1,152 @@
+{% extends "roomManager/base.html" %}
+{% load staticfiles %}
+{% block title %}增加账户余额-酒店自助入住终端{% endblock %}
+
+{% block other_css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/QueryCenterStyle.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-select.min.css" %}">
+{% endblock %}
+
+{% block other_script %}
+<script type="text/javascript" src = "{% static "js/bootstrap-select.js" %}" ></script>
+{% endblock %}
+
+{% block other_breadcrumb_ol %}
+{% endblock %}
+
+<!-- 左侧控制台 -->
+{% block left_content %}
+<div class="col-sm-3 col-md-2 sidebar">
+	<br>
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 查询中心</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if queryByRoomType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomType" %}">按客房类型查询</a></li>
+					<li {% if queryByFloorId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByFloorId" %}">按楼层查询</a></li>
+					<li {% if queryByBedType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByBedType" %}">按床铺类型查询</a></li>
+					<li {% if queryByRoomId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomId" %}">按房间号查询</a></li>
+				</ul>
+			</div>
+	</div>
+
+{% if user.permission > '0' %}
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 房间管理</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if myRoom %}class="compare_active" {% endif %} >
+							<a href="{% url "roomManager:myRoom" %}">已定查看</a>
+					</li>
+					<li {% if checkOut %}class="compare_active" {% endif %}>
+						<a href="{% url "roomManager:checkOut" %}">退房管理</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="panel LeftContent_panel">
+				<div class="panel-heading">
+					<p><span class="glyphicon glyphicon-align-right"></span>个人信息管理</p>
+				</div>
+				<div class="panel-body QueryCenter_Pbody">
+					<ul style="padding-left: 15px;">
+						<li {% if MyInf %}class="compare_active" {% endif %} >
+								<a href="{% url "accounts:accounts_listMyInf" %}">个人信息查看</a>
+						</li>
+						{% if user.permission == '2' %}
+						<li {% if updateInf %}class="compare_active" {% endif %}>
+								<a href="{% url "accounts:accounts_updateInf" %}">个人基本信息修改</a>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+{% endif %}
+</div>
+{% endblock %}
+
+<!-- 右侧控制台 -->
+{% block right_content %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+		<div class="panel-group" id="accordion">
+			<div class="panel panel-default Collapse_content">
+        <!-- -->
+          <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                  <span class="glyphicon glyphicon-align-right"></span> 账户充值
+                </a>
+              </h4>
+          </div>
+
+					<div class="panel-collapse collapse in RightContent_panel" id="collapseOne">
+						<div class="panel-body">
+
+								<div class="tab-content" style="margin-bottom:20px;">
+                				<!-- 账户充值 -->
+											<div class="tab-pane active" id="Query_BedType">
+
+												<br><br>
+														<div class="container">
+															<div class="row">
+																<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+																	{% if status == 're_err' %}
+																		<div class="well">
+																			<h2 class="text-warning text-center">金额重复错误</h2>
+																		</div>
+																	{% endif %}
+																	<form method="POST" role="form" class="form-horizontal">
+																		{% csrf_token %}
+
+                                    <div class="form-group">
+              													<label class="col-md-3 control-label">请选择充值类型：</label>
+                                        <div class="col-md-6">
+                                          <select class="form-control" value="银行卡" id="addtype_id" name="addtype">
+                														  <option value="银行卡">银行卡</option>
+                															<option value="支付宝">支付宝</option>
+                													</select>
+  																			</div>
+
+																		</div>
+
+																		<div class="form-group">
+																			<label for="id_addbalance" class="col-md-3 control-label">充值金额：</label>
+																			<div class="col-md-6">
+																				<input type="text" class="form-control" id="id_addbalance" required name="addbalance" autofocus>
+																				<span class="help-block"> </span>
+																			</div>
+																		</div>
+
+																		<div class="form-group">
+																			<label for="id_readdbalance" class="col-md-3 control-label">再次输入金额：</label>
+																			<div class="col-md-6">
+																				<input type="text" class="form-control" required name="readdbalance" id="id_readdbalance">
+																				<span class="help-block"> </span>
+																			</div>
+																		</div>
+
+																		<div class="form-group">
+																	    <div class="col-md-3 col-md-offset-4">
+																				<span class="help-block"> </span>
+																	      <button class="btn btn btn-primary btn-block" type="submit">充值</button>
+																	    </div>
+																	  </div>
+																	</form>
+																</div>
+															</div>
+														</div>
+											</div>
+
+								</div>
+						</div>
+					</div>
+			</div>
+		</div>
+</div>
+
+{% endblock %}

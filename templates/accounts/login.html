@@ -1,0 +1,189 @@
+{% extends "roomManager/base.html" %}
+{% load staticfiles %}
+{% block title %}非会员登录-酒店自助入住管理系统{% endblock %}
+
+{% block other_css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/QueryCenterStyle.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-select.min.css" %}">
+{% endblock %}
+
+{% block other_script %}
+<script type="text/javascript" src = "{% static "js/bootstrap-select.js" %}" ></script>
+{% endblock %}
+
+{% block other_breadcrumb_ol %}
+{% endblock %}
+
+<!-- 左侧控制台 -->
+{% block left_content %}
+<div class="col-sm-3 col-md-2 sidebar">
+	<br>
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 查询中心</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if queryByRoomType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomType" %}">按客房类型查询</a></li>
+					<li {% if queryByFloorId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByFloorId" %}">按楼层查询</a></li>
+					<li {% if queryByBedType %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByBedType" %}">按床铺类型查询</a></li>
+					<li {% if queryByRoomId %}class="compare_active" {% endif %}><a href="{% url "roomManager:queryByRoomId" %}">按房间号查询</a></li>
+				</ul>
+			</div>
+	</div>
+
+{% if user.permission > '0' %}
+	<div class="panel LeftContent_panel">
+			<div class="panel-heading">
+				<p><span class="glyphicon glyphicon-align-right"></span> 房间管理</p>
+			</div>
+			<div class="panel-body QueryCenter_Pbody">
+				<ul style="padding-left: 15px;">
+					<li {% if myRoom %}class="compare_active" {% endif %} >
+							<a href="{% url "roomManager:myRoom" %}">已定查看</a>
+					</li>
+					<li {% if checkOut %}class="compare_active" {% endif %}>
+						<a href="{% url "roomManager:checkOut" %}">退房管理</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="panel LeftContent_panel">
+				<div class="panel-heading">
+					<p><span class="glyphicon glyphicon-align-right"></span>个人信息管理</p>
+				</div>
+				<div class="panel-body QueryCenter_Pbody">
+					<ul style="padding-left: 15px;">
+						<li {% if MyInf %}class="compare_active" {% endif %} >
+								<a href="{% url "accounts:accounts_listMyInf" %}">个人信息查看</a>
+						</li>
+						{% if user.permission == '2' %}
+						<li {% if updateInf %}class="compare_active" {% endif %}>
+								<a href="{% url "accounts:accounts_updateInf" %}">个人基本信息修改</a>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+{% endif %}
+</div>
+{% endblock %}
+
+<!-- 右侧控制台 -->
+{% block right_content %}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+		<div class="panel-group" id="accordion">
+			<div class="panel panel-default Collapse_content">
+        <!-- -->
+          <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                  <span class="glyphicon glyphicon-align-right"></span> 用户登陆/普通用户登陆
+                </a>
+              </h4>
+          </div>
+
+					<div class="panel-collapse collapse in RightContent_panel" id="collapseOne">
+						<div class="panel-body">
+
+
+								<div class="tab-content" style="margin-bottom:20px;">
+                				<!-- 指标查询 -->
+											<div class="tab-pane active" id="Query_BedType">
+												<br>
+												<br>
+												 	<form class="" role="form"  method="post">
+														{% csrf_token %}
+														<div class="container">
+															<div class="row">
+																<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+																	{% if status == 'success' %}
+																		<div class="well">
+																			<h2 class="text-success text-center">登陆成功！！</h2>
+																			<h2 class="text-success text-center">登陆名：身份证号码     密码：身份证号码后6位！</h2>
+																			<h2 class="text-success text-center">下次可以直接登陆，也可以修改密码！</h2>
+																		</div>
+																	{% elif status == 'validate_error' %}
+																		<div class="well">
+																			<h2 class="text-warning text-center">验证失败，请重新填写信息！</h2>
+																		</div>
+																	{% elif status == 'phone_exist' %}
+																			<div class="well">
+																				<h2 class="text-warning text-center">该电话号码被占用！</h2>
+																			</div>
+																	{% elif status == 'user_exist' %}
+																		<div class="well">
+																			<h2 class="text-danger text-center">用户已经存在</h2>
+																			<h2 class="text-success text-center">登陆名：身份证号码 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密码：身份证号码后6位！</h2>
+																		</div>
+																	{% endif %}
+																	{% if status == 'success' or status == ''%}
+																	<form method="POST" role="form" class="form-horizontal">
+																		<span class="help-block"></span>
+																		<span class="help-block"></span>
+																	  {% csrf_token %}
+
+																	  <div class="form-group">
+																			<span class="help-block"></span>
+																	    <label for="id_user_name" class="col-md-3 control-label">用户姓名：</label>
+																	    <div class="col-md-9">
+																	      <input type="text" class="form-control" id="id_user_name" required name="username" placeholder="用户名" autofocus>
+																				<span class="help-block"></span>
+																	    </div>
+																	  </div>
+
+																	  <div class="form-group">
+																	    <label for="id_sex" class="col-md-3 control-label">&nbsp;性&nbsp;&nbsp;&nbsp;别&nbsp;&nbsp;：</label>
+																	    <div class="col-md-9">
+																	      <input type="text" class="form-control" id="id_sex" required name="sex" placeholder="性别" >
+																				<span class="help-block"></span>
+																	    </div>
+																	  </div>
+
+																		<div class="form-group">
+																	    <label for="id_cardnum" class="col-md-3 control-label">身份证号：</label>
+																	    <div class="col-md-9">
+																	      <input type="text" class="form-control" id="id_cardnum" required name="cardnum" placeholder="身份证号">
+																				<span class="help-block">用于登陆，可以包括大小写字母和下划线。</span>
+																	    </div>
+																	  </div>
+
+																	  <div class="form-group">
+																	    <label for="id_phonenum" class="col-md-3 control-label">电话号码：</label>
+																	    <div class="col-md-9">
+																	      <input type="text" class="form-control" id="id_phonenum" required name="phonenum" placeholder="电话号码">
+																				<span class="help-block"></span>
+																	    </div>
+																	  </div>
+
+																	  <center><a class=" " href="{% url "accounts:accounts_vipLogin"%}" role="button">
+																	      如果是会员，请点击这里
+																				<span class="help-block"> </span>
+																	  </a></center>
+
+																	  <div class="form-group">
+																	    <div class="col-md-2 col-md-offset-5">
+																	      <button class="btn btn btn-primary btn-block" type="submit">登陆</button>
+																	    </div>
+																	    <div class="col-md-2 col-md-offset-1">
+																	      <button class="btn btn btn-primary btn-block" type="reset">重置</button>
+																	    </div>
+																	  </div>
+																	</form>
+																	{% endif %}
+																</div>
+															</div>
+														</div>
+
+													</form>
+											</div>
+
+								</div>
+						</div>
+					</div>
+			</div>
+		</div>
+</div>
+
+{% endblock %}
